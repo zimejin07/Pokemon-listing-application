@@ -13,6 +13,7 @@ import { PokemonListService } from "../pokemon-services/pokemon-list.service";
 import { Router } from "@angular/router";
 import { Observable } from "rxjs";
 import { PokemonDetails } from "./pokemon-details.interface";
+import { PokemonColor, POKEMON_BG } from "./pokemon.details.const";
 
 @Component({
   selector: "app-pokemons-details",
@@ -21,7 +22,13 @@ import { PokemonDetails } from "./pokemon-details.interface";
   template: `
     <div class="pokemon-details-content">
       @if (pokemonDetails$ | async; as pokemonDetails) { @defer {
-      <div class="poke-card poke-grass">
+      <div
+        class="poke-card poke-grass"
+        [ngStyle]="{
+          'background-image':
+            'url(' + getBackgroundUrl(pokemonDetails.color) + ')'
+        }"
+      >
         <div class="poke-back">
           <img [src]="pokemonDetails.frontShiny" alt="pokemon image" />
         </div>
@@ -180,10 +187,6 @@ import { PokemonDetails } from "./pokemon-details.interface";
           padding: 0.25rem;
           border-radius: 4px;
         }
-
-        .poke-grass .poke-back {
-          background-image: url(https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhuGIiG40D1trHF0RUp_fLs61caomGwXf8DtnPgp8GPgCBh1bP17ETN7f8xHNL0dcgL50XwF7btJJjOOznSWyNNDSe54hNQxBsmZXdirpCqS1qQYCZCq0wHajG_j1VsU3bDP6JN3IyRKXoyIr6hI2f7FFIdpqeliwSmm0qnN6Ua19fvKVdtITk8pzhiGNY/s0/grass.png);
-        }
       }
     `,
   ],
@@ -203,6 +206,14 @@ export class PokemonDetailsComponent implements OnInit {
       this.id,
       history.state?.pokemon
     );
+  }
+
+  getBackgroundUrl(selectedColor: PokemonColor | string): string {
+    const colorKey = selectedColor as PokemonColor;
+    if (colorKey in POKEMON_BG) {
+      return POKEMON_BG[colorKey];
+    }
+    return "";
   }
 
   backToPage() {
